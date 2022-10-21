@@ -1,123 +1,139 @@
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
-    // establish the dictionary for all three levels, words are taken from Scrabble US dictionary at wordfinderx.com
-    private static final String[] dictionaryLevel1 = {"tilted","titled","tilde", "tiled", "title", "deil", "deli", "delt", "diel", "diet", "dite", "edit", "idle", "lied", "tide", "tide", "lite", "tile", "tilt", "del", "die", "dit", "eld", "led", "lid", "ted", "lei", "let", "lie", "lit", "tel", "tet", "tie", "til", "tit"};
-    private static final String[] dictionaryLevel2 = {"encase", "seance", "seneca", "ances", "canes", "cease", "cense", "scena", "scene", "aces", "acne", "cane", "cans", "case", "cees", "scan", "anes", "ease", "esne", "naes", "sane", "seen", "sene", "ace", "can", "cee", "sac", "sec", "ane", "ens", "nae", "nee", "sae", "san", "sea", "see", "sen"};
-    private static final String[] dictionaryLevel3 = {"honker", "krone", "heron", "honer", "hoke", "honk", "hork", "okeh", "keno", "kern", "kore", "hern", "hero", "hoer", "hone", "horn,", "reno", "ken", "kor", "oke", "hen", "her", "hoe", "hon", "noh", "rho", "eon", "ern", "nor", "one", "ore", "roe"};
-
-    // establish variables that will be used
-    private static final Scanner input = new Scanner(System.in);
-    private static final ArrayList<String> userAnswersArray = new ArrayList<>();
-    private static int overallScore = 0;
-    private static int currentScore = 0;
+    // import Scanner class
+    private static final Scanner in = new Scanner(System.in);
+    // establish the array with dummy value of 0,1,2,3,4
+    private static final int[] arr = {0, 1, 2, 3, 4};
+    // establish the variables will be used
+    private static int userInput;
+    private static int randomMin;
+    private static int randomMax;
     private static boolean status = true;
 
     public static void main(String[] args) {
-        // check status first, if its true then the program runs else it stops
+        // print welcome notice
+        System.out.println("Selamat datang di Program Simulasi");
+        System.out.println("Menu");
+        System.out.println("1. Random Data");
+        System.out.println("2. Simulasi Bubble Sort - Ascending");
+        System.out.println("3. Simulasi Selection Sort - Ascending");
+        System.out.println("4. Simulasi Bubble Sort - Descending");
+        System.out.println("5. Simulasi Selection Sort - Descending");
+        System.out.println("6. Keluar");
+        System.out.print("Masukkan Pilihan Anda: ");
+        userInput = in.nextInt();
+
+        // run program while the status is true
         while (status) {
-            // print welcome text for users
-            System.out.println("Coepoe Word Puzzle");
-            System.out.println("==================\n");
-            System.out.println("Rules : ");
-            System.out.println("1. Create a word using given characters, min 3 characters & max 6 characters");
-            System.out.println("2. Each level, you have 10 chances to answer correctly");
-            System.out.println("3. To get through to next level you have to score 70 point each level\n");
+            // ask the user for batas bawah and batas atas, it will correlate with generateNum
+            System.out.print("Batas bawah = ");
+            randomMin = in.nextInt();
+            System.out.print("Batas atas = ");
+            randomMax = in.nextInt();
+            generateNum(arr, randomMax, randomMin);
 
-            // start level 1 with array of dictionaryLevel1 selected
-            System.out.println("Level 1");
-            System.out.println("d         e         t         t         l         i");
-            Level(dictionaryLevel1);
-
-            // start level 2 with array of dictionaryLevel2 selected
-            if (currentScore >= 70) {
-                currentScore = 0;
-                userAnswersArray.clear();
-                System.out.println("\nLevel 2");
-                System.out.println("s         e         c         a         e         n");
-                Level(dictionaryLevel2);
-            }
-
-            // start level 3 with array of dictionaryLevel3 selected
-            if (currentScore >= 70) {
-                currentScore = 0;
-                userAnswersArray.clear();
-                System.out.println("\nLevel 3");
-                System.out.println("h         k         r         n         e         o");
-                Level(dictionaryLevel3);
-            }
-
-            // check if currentScore is less than 70, user lose, else they win
-            if (currentScore <= 70) {
-                System.out.println("\nYou lose!! Try again..");
-                System.out.print("Do you want to retry?  [Y/T] ");
-                String retry = input.nextLine();
-                if (retry.equalsIgnoreCase("t")){
-                    status = false;
-                } else if (retry.equalsIgnoreCase("y")) {
-                    status = true;
-                } else {
-                    status = false;
-                }
+            // brancing if to check what kind of number they input, 1 = random numbers, 2 = bubble sort-ascending, etc.
+            if (userInput == 1) {
+                printArray(arr);
+                status = false;
+            } else if (userInput == 2 || userInput == 4) {
+                bubbleSort(arr, arr.length, userInput);
+                printArray(arr);
+                status = false;
+            } else if (userInput == 3 || userInput == 5) {
+                selectionSort(arr, arr.length, userInput);
+                printArray(arr);
+                status = false;
             } else {
-                System.out.println("\nOverall score : " + overallScore);
-                System.out.println("You win!!");
-                System.out.print("\nDo you want to retry?  [Y/T] ");
-                String retry = input.nextLine();
-                if (retry.equalsIgnoreCase("t")){
-                    status = false;
-                } else if (retry.equalsIgnoreCase("y")) {
-                    status = true;
-                } else {
-                    status = false;
+                status = false;
+            }
+        }
+    }
+
+    // generate random numbers from randomMin to randomMax
+    public static void generateNum(int[] arr, int randomMax, int randomMin) {
+        for (int i = 0; i < 5; i++) {
+            int rand = (int) (Math.random() * (randomMax - randomMin)) + randomMin;
+            if (rand == arr[i]) {
+                int randNew = (int) (Math.random() * (randomMax - randomMin)) + randomMin;
+                arr[i] = randNew;
+            } else {
+                arr[i] = rand;
+            }
+        }
+    }
+
+    // bubble sort, has two types which is ascending and descending depending on userInput
+    public static void bubbleSort(int[] arr, int n, int userInput) {
+        if (n == 0 || n == 1) {
+            return;
+        }
+        switch (userInput) {
+            case 2:
+                for (int i = 0; i < n - 1; i++) {
+                    if (arr[i] > arr[i + 1]) {
+                        printArray(arr);
+                        swap(arr, i, i + 1);
+                    }
                 }
-            }
+                break;
+            case 4:
+                for (int i = 0; i < n - 1; i++) {
+                    if (arr[i] < arr[i + 1]) {
+                        printArray(arr);
+                        swap(arr, i, i + 1);
+                    }
+                }
+                break;
         }
     }
 
-    private static void Level(String[] dictionaryLevel1) {
-        String userAnswer;
-        for (int i = 1; i <= 10; i++) {
-            System.out.print(i + "> Your Answer : ");
-            userAnswer = input.nextLine().trim().toLowerCase();
-            if (validateAnswer(dictionaryLevel1, userAnswer)) {
-                currentScore += 10;
-                System.out.println("#Right. Score = " + currentScore);
-            }
+    // selection sort, has two types which is ascending and descending depending on userInput
+    public static void selectionSort(int[] arr, int n, int userInput) {
+        if (n == 0 || n == 1) {
+            return;
         }
-        System.out.println("You had answered 10 times with " + (currentScore / 10) + " right answers..\n");
-        overallScore += currentScore;
-        System.out.println("Correct answers : ");
-        printArray(dictionaryLevel1);
+        switch (userInput) {
+            case 3:
+                for (int i = 0; i < n - 1; i++) {
+                    for (int j = i + 1; j < n; j++) {
+                        if (arr[j] < arr[i]) {
+                            printArray(arr);
+                            swap(arr, i, j);
+                        }
+                    }
+                }
+                break;
+            case 5:
+                for (int i = 0; i < n - 1; i++) {
+                    for (int j = i + 1; j < n; j++) {
+                        if (arr[j] > arr[i]) {
+                            printArray(arr);
+                            swap(arr, i, j);
+                        }
+                    }
+                }
+                break;
+        }
     }
 
-    private static void printArray(String[] dictionaryLevel) {
+    // swap method to swap the numbers within an array
+    public static void swap (int[] arr, int i, int j) {
+        int temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+
+    // printArray method to print all values within an array
+    public static void printArray(int[] arr) {
         int currentIdx = 0;
-        while (currentIdx < dictionaryLevel.length) {
-            for (int i = 0; i < 10 && currentIdx < dictionaryLevel.length; i++) {
-                System.out.print(dictionaryLevel[currentIdx] + ", ");
+        while (currentIdx < arr.length) {
+            for (int i = 0; i < 10 && currentIdx < arr.length; i++) {
+                System.out.print(arr[currentIdx] + " ");
                 currentIdx++;
             }
             System.out.println();
         }
-    }
-
-    private static boolean validateAnswer(String[] dictionaryLevel, String userAnswer) {
-        if (userAnswer.length() < 3 || userAnswer.length() > 6) {
-            System.out.println("Your answer should be min 3 characters and max 6 characters!");
-        }
-        else if (Arrays.asList(dictionaryLevel).contains(userAnswer) && !userAnswersArray.contains(userAnswer)) {
-            userAnswersArray.add(userAnswer);
-            return true;
-        } else if (userAnswersArray.contains(userAnswer)) {
-            System.out.println("you have already entered this word, you can't!");
-            return false;
-        } else if (!Arrays.asList(dictionaryLevel).contains(userAnswer)) {
-            System.out.println("Sorry, that word doesn't exist in our dictionary!");
-            return false;
-        }
-        return false;
     }
 }
